@@ -1,0 +1,22 @@
+<!-- <div id="inputSearchEditable">
+  <div class="editableWrapper">
+    <div
+      contenteditable
+      #search
+      (keyup)="onKeyup($event)"
+      [formControl]="ctrl"
+    >
+      Testb
+      <span style="color: red;">Red</span>
+    </div>
+  </div>
+</div>
+<ng-content></ng-content> -->
+
+<div id="inputSearchEditable">
+  <div class="editableWrapper">
+    <div contenteditable #search [formControl]="ctrl" id="editable"></div>
+    <div id="caret"></div>
+  </div>
+</div>
+<ng-content></ng-content>

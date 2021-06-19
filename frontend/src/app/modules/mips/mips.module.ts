@@ -41,6 +41,10 @@ import { AutocompleteContentDirective } from './directives/autocomplete-content.
 import { AutocompleteDirective } from './directives/autocomplete.directive';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FilterPipe } from './pipes/filter.pipe';
+import { FormsModule } from '@angular/forms';
+import { ContenteditableValueAccessorModule } from '@tinkoff/angular-contenteditable-accessor';
+import { InputFormattingComponent } from './components/input-formatting/input-formatting.component';
+import { InputFormattingRefDirective } from './directives/input-formatting-ref.directive';
 
 
 @NgModule({
@@ -73,7 +77,9 @@ import { FilterPipe } from './pipes/filter.pipe';
     AutocompleteComponent,
     AutocompleteContentDirective,
     AutocompleteDirective,
-    FilterPipe
+    FilterPipe,
+    InputFormattingComponent,
+    InputFormattingRefDirective
   ],
   imports: [
     CommonModule,
@@ -88,7 +94,9 @@ import { FilterPipe } from './pipes/filter.pipe';
       sanitize: SecurityContext.NONE
     }),
     OverlayModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule,
+    ContenteditableValueAccessorModule
   ]
 })
 export class MipsModule { }

@@ -1,7 +1,7 @@
 <div class="row">
   <div style="position: relative;">
     <img class="search-icon" src="{{ imageDir }}" />
-    <input
+    <!-- <input
       type="text"
       #search
       placeholder="{{ placeHolder }}"
@@ -11,7 +11,34 @@
       [ngClass]="{ error: error }"
       [appAutocomplete]="autocomplete"
       [formControl]="control"
-    />
+    /> -->
+    <!-- <div id="inputSearchEditable">
+      <div class="editableWrapper">
+        <div contenteditable
+          #search
+
+          (keyup)="onKeySearch($event)"
+          [ngStyle]="{ borderRadius: showListSearch ? '5px 5px 0 0' : '5px' }"
+
+          [ngClass]="{ error: error }"
+          [appAutocomplete]="autocomplete"
+          [formControl]="control">Testb</div>
+      </div>
+    </div> -->
+    <app-input-formatting>
+      <input
+        appInputFormattingRef
+        type="text"
+        #search
+        placeholder="{{ placeHolder }}"
+        (keyup)="onKeySearch($event)"
+
+        [value]="value"
+        [ngClass]="{ error: error }"
+        [appAutocomplete]="autocomplete"
+        [formControl]="control"
+      />
+    </app-input-formatting>
     <div *ngIf="showListSearch && search.value" class="ListSearchWrapper">
       <div class="ListSearch">
         <div

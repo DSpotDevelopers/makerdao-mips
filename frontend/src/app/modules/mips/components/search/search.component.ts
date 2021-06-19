@@ -45,7 +45,6 @@ export class SearchComponent implements OnInit {
   indexCaretPositionEnd: number;
   isFilteringOption: boolean = false;
   selectedAutocompleteOptionByEnter: boolean = false;
-
   constructor() {}
 
   ngOnInit(): void {
@@ -86,6 +85,8 @@ export class SearchComponent implements OnInit {
           this.searchAutocompleteOptions(event);
         }
       } else {
+        console.log("event", event.target.value);
+
         this.isQueryMode = false;
         this.showClose =
           this.inputSearch.nativeElement.value === '' ? false : true;

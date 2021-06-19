@@ -52,8 +52,14 @@ export class AutocompleteDirective {
       .subscribe((ev: any) => {
         this.indexCaretPosition = (this.host
           .nativeElement as HTMLInputElement).selectionStart;
+        // console.log("this.indexCaretPosition", this.indexCaretPosition);
+        // console.log("this.appAutocomplete.labels", this.appAutocomplete.labels);
+        // console.log("ev.key", ev.key);
+        // console.log("ev", ev);
 
         if (this.appAutocomplete.labels.findIndex((i) => i === ev.key) !== -1) {
+          console.log("yes");
+
           this.indexCaretPositionStart = (this.host
             .nativeElement as HTMLInputElement).selectionStart;
 
@@ -108,6 +114,7 @@ export class AutocompleteDirective {
           this.indexCaretPositionStart + value.length;
         (this.host.nativeElement as HTMLInputElement).selectionEnd =
           this.indexCaretPositionStart + value.length;
+        (this.host.nativeElement as HTMLInputElement).dispatchEvent(new Event("input"));
       });
 
     this.appAutocomplete.options.changes.subscribe(
@@ -122,6 +129,8 @@ export class AutocompleteDirective {
   }
 
   openDropdown() {
+    console.log("openDropdown");
+
     this.overlayRef = this.overlay.create({
       width: this.origin.offsetWidth,
       maxHeight: 40 * 3,

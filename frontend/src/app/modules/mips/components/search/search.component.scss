@@ -217,3 +217,66 @@ input {
     opacity: 1;
   }
 }
+
+::ng-deep.text-input-highlight-container {
+  position: relative;
+
+  .text-input-element {
+    background: none;
+    position: relative;
+    z-index: 2;
+    resize: none;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .text-highlight-element {
+    overflow: hidden !important;
+    word-break: break-word;
+    white-space: pre-wrap;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    color: rgba(0, 0, 0, 0);
+    z-index: 1;
+  }
+
+  .text-highlight-tag {
+    border-radius: 8px;
+    padding: 1px 3px;
+    margin: -1px -3px;
+    overflow-wrap: break-word;
+  }
+}
+
+// #inputSearchEditable {
+//   border: 1px solid transparent;
+//   box-sizing: border-box;
+//   width: 336px;
+//   height: 40px;
+//   border-radius: 5px;
+//   box-shadow: 0px 1px 4px #e5e9f2;
+//   color: #31394d;
+//   font-size: 14px;
+//   padding-right: 32px;
+//   padding-left: 34px;
+//   border-radius: 5px;
+//   background: #ffffff;
+//   white-space: nowrap;
+//   overflow-x: auto;
+//   display: flex;
+//   align-items: center;
+
+//   .editableWrapper {
+//     width: 100%;
+//     overflow: hidden;
+//   }
+// }
+
+// /* scrollbar width */
+// #inputSearchEditable::-webkit-scrollbar {
+//   height: 0px;
+// }
