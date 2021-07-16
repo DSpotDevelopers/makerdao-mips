@@ -1,10 +1,21 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild, Input, HostBinding, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Output,
+  EventEmitter,
+  ViewChild,
+  Input,
+  HostBinding,
+  ChangeDetectorRef,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { ConnectedPosition } from '@angular/cdk/overlay';
 import { FormControl } from '@angular/forms';
 import { SmartSearchService } from '../../services/smart-search.service';
 import { debounceTime, map } from 'rxjs/operators';
-
+import IFormatting from '../../types/formatting';
+import { position } from 'caret-pos';
 
 @Component({
   selector: 'app-search-mobile',
@@ -13,7 +24,7 @@ import { debounceTime, map } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchMobileComponent implements OnInit {
-
+  @Input() placeHolder? = 'Search on the list';
   @Output() send = new EventEmitter();
   @Output() open = new EventEmitter<boolean>();
   timeout: any = null;
@@ -42,67 +53,65 @@ export class SearchMobileComponent implements OnInit {
   selectedAutocompleteOptionByEnter: boolean = false;
   activatedLabelAutocomplete: string;
   searchOptionsSubscription: Subscription;
+  format: IFormatting[] = [
+    {
+      pattern: /and\(/gi,
+      replace: "<span style='font-weight:bold;'>AND</span>(",
+    },
+    {
+      pattern: /or\(/gi,
+      replace: "<span style='font-weight:bold;'>OR</span>(",
+    },
+    {
+      pattern: /not\(/gi,
+      replace: "<span style='font-weight:bold;'>NOT</span>(",
+    },
+    {
+      pattern: /@accepted/gi,
+      replace: "@<span style='font-weight:500;color:#27AE60'>Accepted</span>",
+    },
+    {
+      pattern: /@rejected/gi,
+      replace: "@<span style='font-weight:500;color:#EB5757'>Rejected</span>",
+    },
+    {
+      pattern: /@rfc/gi,
+      replace: "@<span style='font-weight:500;color:#F2994A'>RFC</span>",
+    },
+    {
+      pattern: /@archive/gi,
+      replace: "@<span style='font-weight:500;color:#748AA1'>Archive</span>",
+    },
+    {
+      pattern: /@obsolete/gi,
+      replace: "@<span style='font-weight:500;color:#CBAB48'>Obsolete</span>",
+    },
+    {
+      pattern: /@Formal\sSubmission/gi,
+      replace:
+        "@<span style='font-weight:500;color:#9B51E0'>Formal Submission</span>",
+    },
+  ];
 
   constructor(
     private cdr: ChangeDetectorRef,
     private smartSearchService: SmartSearchService
-  ) { }
-
-  onKeySearch(event: any): void {
-    clearTimeout(this.timeout);
-
-    if (event) {
-      if (this.isQuery(event.target.value)) {
-        this.isQueryMode = true;
-        this.showClose = false;
-
-        if (event.keyCode == 13 && !this.selectedAutocompleteOptionByEnter) {
-          this.timeout = setTimeout(() => {
-            this.send.emit(event);
-          }, 1000);
-        } else {
-          this.selectedAutocompleteOptionByEnter = false;
-          this.filteringOptions();
-        }
-      } else {
-        this.options = [];
-        this.isQueryMode = false;
-        this.showClose =
-          this.inputSearch.nativeElement.value === '' ? false : true;
-
-        this.timeout = setTimeout(() => {
-          this.send.emit(event);
-        }, 1000);
-      }
-    }
-  }
-
-  isQuery(data: string): boolean {
-    let search = data.toLowerCase().trim();
-
-    return search.startsWith('$');
-  }
-
-  // onChange(event: any): void {
-  //   if (event) {
-  //     this.text = event.target.value;
-  //     this.send.emit(event);
-  //   }
-  // }
-
-  clear(): void {
-    this.showClose = false;
-    this.inputSearch.nativeElement.value = '';
-    this.text = '';
-    let event = new Event('keyup');
-    this.inputSearch.nativeElement.dispatchEvent(event);
-    this.onOpenCloseInput();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.control.setValue(this.value);
     this.showClose = this.value ? true : false;
     this.initPositionHelpPopup();
+  }
+
+  ngAfterViewInit() {
+    (this.inputSearch.nativeElement as HTMLElement).setAttribute(
+      'placeholder',
+      this.placeHolder
+    );
+
+    this.isQueryMode = this.isQuery(this.value);
+    this.cdr.detectChanges();
   }
 
   initPositionHelpPopup() {
@@ -118,6 +127,78 @@ export class SearchMobileComponent implements OnInit {
 
   openHelpPopup() {
     this.isOpenHelpPopup = !this.isOpenHelpPopup;
+  }
+
+  onKeySearch(event: any): void {
+    clearTimeout(this.timeout);
+
+    if (event) {
+      let val: string = this.control.value;
+
+      if (this.inputSearch.nativeElement.constructor !== HTMLInputElement) {
+        val = (this.inputSearch.nativeElement as HTMLElement).innerText;
+      }
+
+      if (this.isQuery(val)) {
+        this.isQueryMode = true;
+        this.showClose = false;
+
+        if (event.keyCode == 13 && !this.selectedAutocompleteOptionByEnter) {
+          this.timeout = setTimeout(() => {
+            if (
+              this.inputSearch.nativeElement.constructor === HTMLInputElement
+            ) {
+              this.send.emit(event);
+            } else {
+              event.target.value = (this.inputSearch
+                .nativeElement as HTMLElement).innerText;
+              this.send.emit(event);
+            }
+          }, 1000);
+        } else {
+          this.selectedAutocompleteOptionByEnter = false;
+          this.filteringOptions();
+        }
+      } else {
+        this.options = [];
+        this.isQueryMode = false;
+
+        if (this.inputSearch.nativeElement.constructor === HTMLInputElement) {
+          this.showClose =
+            this.inputSearch.nativeElement.value === '' ? false : true;
+        } else {
+          this.showClose =
+            (this.inputSearch.nativeElement as HTMLElement).innerText === ''
+              ? false
+              : true;
+        }
+
+        this.timeout = setTimeout(() => {
+          if (this.inputSearch.nativeElement.constructor === HTMLInputElement) {
+            this.send.emit(event);
+          } else {
+            event.target.value = (this.inputSearch
+              .nativeElement as HTMLElement).innerText;
+            this.send.emit(event);
+          }
+        }, 1000);
+      }
+    }
+  }
+
+  isQuery(data: string): boolean {
+    let search = data.toLowerCase().trim();
+
+    return search.startsWith('$');
+  }
+
+  clear(): void {
+    this.showClose = false;
+    this.control.setValue('');
+    this.text = '';
+    let event = new Event('keyup');
+    this.inputSearch.nativeElement.dispatchEvent(event);
+    this.onOpenCloseInput();
   }
 
   onOpenCloseInput(): void {
@@ -144,17 +225,20 @@ export class SearchMobileComponent implements OnInit {
     this.cdr.detectChanges();
 
     if (event === '@') {
-      this.indexCaretPositionStart = (this.inputSearch
-        .nativeElement as HTMLInputElement).selectionStart;
+      this.indexCaretPositionStart = position(
+        this.inputSearch.nativeElement
+      ).pos;
       this.isFilteringOption = true;
 
       this.searchOptionsSubscription = this.control.valueChanges
         .pipe(debounceTime(10))
         .subscribe((value) => {
-          this.indexCaretPositionEnd = (this.inputSearch
-            .nativeElement as HTMLInputElement).selectionEnd;
+          this.indexCaretPositionEnd = position(
+            this.inputSearch.nativeElement
+          ).pos;
 
-          const search: string = value.slice(
+          const search: string = (this.inputSearch
+            .nativeElement as HTMLElement).innerText.slice(
             this.indexCaretPositionStart,
             this.indexCaretPositionEnd
           );
@@ -180,13 +264,25 @@ export class SearchMobileComponent implements OnInit {
             });
         });
 
+      let search: string;
+
+      if (this.inputSearch.nativeElement.constructor === HTMLInputElement) {
+        search = this.control.value.slice(
+          this.indexCaretPositionStart,
+          this.indexCaretPositionEnd
+        )
+      } else {
+        search = (this.inputSearch
+          .nativeElement as HTMLElement).innerText.slice(
+          this.indexCaretPositionStart,
+          this.indexCaretPositionEnd
+        );
+      }
+
       this.smartSearchService
         .getOptions(
           'status',
-          this.control.value.slice(
-            this.indexCaretPositionStart,
-            this.indexCaretPositionEnd
-          )
+          search
         )
         .pipe(
           map((data) => {
@@ -206,17 +302,20 @@ export class SearchMobileComponent implements OnInit {
           this.cdr.detectChanges();
         });
     } else if (event === '#') {
-      this.indexCaretPositionStart = (this.inputSearch
-        .nativeElement as HTMLInputElement).selectionStart;
+      this.indexCaretPositionStart = position(
+        this.inputSearch.nativeElement
+      ).pos;
       this.isFilteringOption = true;
 
       this.searchOptionsSubscription = this.control.valueChanges
         .pipe(debounceTime(200))
         .subscribe((value) => {
-          this.indexCaretPositionEnd = (this.inputSearch
-            .nativeElement as HTMLInputElement).selectionEnd;
+          this.indexCaretPositionEnd = position(
+            this.inputSearch.nativeElement
+          ).pos;
 
-          const search: string = value.slice(
+          const search: string = (this.inputSearch
+            .nativeElement as HTMLElement).innerText.slice(
             this.indexCaretPositionStart,
             this.indexCaretPositionEnd
           );
@@ -242,13 +341,25 @@ export class SearchMobileComponent implements OnInit {
             });
         });
 
-      this.smartSearchService
-        .getOptions(
-          'tags',
-          this.control.value.slice(
+        let search: string;
+
+        if (this.inputSearch.nativeElement.constructor === HTMLInputElement) {
+          search = this.control.value.slice(
             this.indexCaretPositionStart,
             this.indexCaretPositionEnd
           )
+        } else {
+          search = (this.inputSearch
+            .nativeElement as HTMLElement).innerText.slice(
+            this.indexCaretPositionStart,
+            this.indexCaretPositionEnd
+          );
+        }
+
+      this.smartSearchService
+        .getOptions(
+          'tags',
+          search
         )
         .pipe(
           map((data) => {
@@ -276,9 +387,40 @@ export class SearchMobileComponent implements OnInit {
 
   filteringOptions() {
     if (this.isFilteringOption) {
-      this.indexCaretPositionEnd = (this.inputSearch
-        .nativeElement as HTMLInputElement).selectionEnd;
+      this.indexCaretPositionEnd = position(this.inputSearch.nativeElement).pos;
     }
   }
 
+  getAutocompleteOptionStyle(value: string): any {
+    const val: string = value.toLowerCase();
+    const style: any = {
+      color: '#00000',
+    };
+
+    switch (val) {
+      case 'accepted':
+        style.color = '#27AE60';
+        break;
+      case 'rejected':
+        style.color = '#EB5757';
+        break;
+      case 'rfc':
+        style.color = '#F2994A';
+        break;
+      case 'obsolete':
+        style.color = '#CBAB48';
+        break;
+      case 'formal submission':
+        style.color = '#9B51E0';
+        break;
+      case 'archive':
+        style.color = '#748AA1';
+        break;
+
+      default:
+        break;
+    }
+
+    return style;
+  }
 }

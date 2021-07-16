@@ -1,6 +1,6 @@
 <div class="container">
   <p class="title" [ngClass]="{'hide': mobileSearch}">MIPs List</p>
-  <div class="row filtering">
+  <div class="filtering" [ngClass]="{row: mobileSearch || !mobileView, 'row-closed-input': !mobileSearch}">
     <!-- <app-md-checkbox-mobile
       [imageNoChecked]="'assets/images/subproposals-mode-no-checked.svg'"
       [imageChecked]="'assets/images/subproposals-mode-checked.svg'"
@@ -13,6 +13,7 @@
       [listSearchItems]="listSearchMip"
       [error]="sintaxError"
       [errorMessage]="errorMessage"
+      [placeHolder]="'e.g $ AND(#process, #mip-set)'"
       (clickSearchItem)="onNavigateToMipDetails($event)">
     </app-search-mobile>
     <app-order-mobile class="mobile" (sendOrder)="onSendOrder($event)"></app-order-mobile>

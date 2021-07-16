@@ -44,6 +44,8 @@ import { FilterPipe } from './pipes/filter.pipe';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { FeedbackDialogComponent } from './components/feedback/feedback-dialog/feedback-dialog.component';
 import {MatDialogModule} from '@angular/material/dialog';
+import { ContenteditableValueAccessorModule } from '@tinkoff/angular-contenteditable-accessor';
+import { FormattingMdDirective } from './directives/formatting-md.directive';
 
 
 @NgModule({
@@ -77,7 +79,8 @@ import {MatDialogModule} from '@angular/material/dialog';
     AutocompleteComponent,
     AutocompleteContentDirective,
     AutocompleteDirective,
-    FilterPipe
+    FilterPipe,
+    FormattingMdDirective
   ],
   imports: [
     CommonModule,
@@ -94,7 +97,8 @@ import {MatDialogModule} from '@angular/material/dialog';
     OverlayModule,
     MatTooltipModule,
     MatDialogModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ContenteditableValueAccessorModule
   ]
 })
 export class MipsModule { }

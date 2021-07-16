@@ -1,5 +1,8 @@
 :host {
   position: relative;
+  box-shadow: 0 1px 4px #e5e9f2;
+  background-color: #fff;
+  border-radius: 5px;
 }
 
 :host(.spread) {
@@ -7,6 +10,7 @@
 
   .container {
     width: 100%;
+    direction: ltr;
   }
 }
 
@@ -23,6 +27,8 @@
   align-items: center;
   justify-content: center;
   position: relative;
+  box-shadow: none;
+  background-color: transparent;
 
   .main {
     // min-width: 39px;
@@ -229,7 +235,7 @@
 }
 
 .error {
-  border: 1px solid #dc3545;
+  border: 1px solid #dc3545 !important;
 }
 
 .invalid {
@@ -248,4 +254,79 @@
   100% {
     opacity: 1;
   }
+}
+
+.textBoxWrapper {
+  padding-left: 30px;
+  padding-right: 30px;
+  float: left;
+  width: 100%;
+  height: 28px;
+  border-radius: 5px;
+  box-shadow: 0px 1px 4px #E5E9F2;
+  color: #31394D;
+  font-size: 14px;
+  font-weight: 400;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  border-radius: 5px;
+  box-shadow: 0px 1px 4px #e5e9f2;
+  color: #31394d;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: #fff;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  cursor: text;
+
+  .contentEditableInput {
+    box-sizing: border-box;
+    color: #31394d;
+    font-size: 14px;
+    font-weight: 500;
+    background-color: #fff;
+    white-space: nowrap;
+    overflow-x: auto;
+    width: 100%;
+
+    &:empty::before {
+      content: attr(placeholder);
+      color: #d2d3d9;
+      font-size: 14px;
+      font-weight: 400;
+    }
+  }
+}
+
+.placeholder {
+  &::before {
+    content: "Placeholder";
+    color: #d2d3d9;
+    font-size: 14px;
+    font-weight: 400;
+  }
+}
+
+/* scrollbar width */
+.contentEditableInput::-webkit-scrollbar {
+  height: 0;
+}
+
+/* scrollbar width */
+:host::-webkit-scrollbar {
+  height: 0;
+  width: 0;
+}
+
+.expandInput {
+  width: 100%;
+  opacity: 1;
+}
+
+.shrinkInput {
+  width: 0;
+  padding: 0;
+  opacity: 0;
 }

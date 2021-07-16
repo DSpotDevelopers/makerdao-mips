@@ -35,10 +35,6 @@ app-order-mobile {
   margin-right: 12px;
 }
 
-app-search-mobile {
-  margin-right: 12px;
-}
-
 .feedback {
   display: flex;
   flex-direction: row;
@@ -102,6 +98,21 @@ app-search-mobile {
         margin-bottom: 12px;
       }
     }
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: calc(100% - 80px) 28px 28px;
+    column-gap: 12px;
+    width: 100%;
+  }
+
+  .row-closed-input {
+    display: grid;
+    grid-template-columns: 28px 28px 28px;
+    column-gap: 12px;
+    width: 100%;
+    justify-content: flex-end;
   }
 }
 

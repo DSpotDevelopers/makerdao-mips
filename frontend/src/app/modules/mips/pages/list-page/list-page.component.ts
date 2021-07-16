@@ -8,6 +8,7 @@ import { FilterItemService } from 'src/app/services/filter-item/filter-item.serv
 import { QueryParamsListService } from '../../services/query-params-list.service';
 import QueryParams from '../../types/query-params';
 import { ElementsRefUiService } from '../../../../services/elements-ref-ui/elements-ref-ui.service';
+import { fromEvent } from 'rxjs';
 
 @Component({
   selector: 'app-list-page',
@@ -39,6 +40,7 @@ export class ListPageComponent implements OnInit, AfterViewInit {
   sintaxError: boolean = false;
   errorMessage: string = '';
   defaultSearch: string = "$ and(not(@Obsolete), not(@Withdrawn))";
+  mobileView: boolean = false;
 
   constructor(
     private mipsService: MipsService,
@@ -86,6 +88,20 @@ export class ListPageComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     setTimeout(() => {
       this.initFiltersList();
+
+      if (window.innerWidth <= 768) {
+        this.mobileView = true;
+      } else {
+        this.mobileView = false;
+      }
+
+      fromEvent(window, 'onresize').subscribe(() => {
+        if (window.innerWidth <= 768) {
+          this.mobileView = true;
+        } else {
+          this.mobileView = false;
+        }
+      });
     }, 200);
   }
 
@@ -400,6 +416,7 @@ export class ListPageComponent implements OnInit, AfterViewInit {
       this.searchMipsByName(0, 0, 'mipName', '', filter);
       this.limit = 0;
     } else {
+      this.showListSearch = false;
       this.listSearchMip = [];
       this.limitAux = 10;
       this.mips = [];

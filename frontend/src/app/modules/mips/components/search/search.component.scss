@@ -80,7 +80,7 @@ input {
 }
 
 .ListSearch {
-  width: 340px;
+  width: 100%;
   background-color: #fff;
   box-shadow: 0px 1px 4px #e5e9f2;
   z-index: 100;
@@ -197,15 +197,15 @@ input {
 }
 
 .error {
-  border: 1px solid #dc3545;
+  border: 1px solid #dc3545 !important;
 }
 
 .invalid {
   position: absolute;
   top: 100%;
   width: 100%;
-  margin-top: .25rem;
-  font-size: .875em;
+  margin-top: 0.25rem;
+  font-size: 0.875em;
   color: #dc3545;
 }
 
@@ -216,4 +216,55 @@ input {
   100% {
     opacity: 1;
   }
+}
+
+.textBoxWrapper {
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  width: 336px;
+  height: 40px;
+  border-radius: 5px;
+  box-shadow: 0px 1px 4px #e5e9f2;
+  color: #31394d;
+  font-size: 14px;
+  font-weight: 500;
+  padding-right: 32px;
+  padding-left: 34px;
+  background-color: #fff;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  cursor: text;
+
+  .contentEditableInput {
+    box-sizing: border-box;
+    color: #31394d;
+    font-size: 14px;
+    font-weight: 500;
+    background-color: #fff;
+    white-space: nowrap;
+    overflow-x: auto;
+    width: 100%;
+
+    &:empty::before {
+      content: attr(placeholder);
+      color: #d2d3d9;
+      font-size: 14px;
+      font-weight: 400;
+    }
+  }
+}
+
+.placeholder {
+  &::before {
+    content: "Placeholder";
+    color: #d2d3d9;
+    font-size: 14px;
+    font-weight: 400;
+  }
+}
+
+/* scrollbar width */
+.contentEditableInput::-webkit-scrollbar {
+  height: 0;
 }

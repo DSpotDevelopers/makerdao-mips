@@ -11,7 +11,7 @@
       src="../../../../../assets/images/magnifier_dark.svg"
     />
   </div>
-  <input
+  <!-- <input
     *ngIf="showInput"
     type="text"
     #search
@@ -23,7 +23,31 @@
     [value]="value"
     [appAutocomplete]="autocomplete"
     [formControl]="control"
-  />
+  /> -->
+  <div
+    class="textBoxWrapper"
+    [ngStyle]="{
+      borderRadius: showListSearch ? '5px 5px 0 0' : '5px'
+    }"
+    [ngClass]="{
+      error: error,
+      expandInput: showInput,
+      shrinkInput: !showInput
+    }"
+  >
+    <div
+      class="contentEditableInput"
+      type="text"
+      #search
+      (keyup)="onKeySearch($event)"
+      [appAutocomplete]="autocomplete"
+      [formControl]="control"
+      contenteditable
+      placeholder=""
+      [appFormattingMd]="format"
+      [activate]="isQueryMode"
+    ></div>
+  </div>
   <div
     class="close-container"
     *ngIf="showInput && !isQueryMode"
@@ -55,7 +79,7 @@
   cdkOverlayOrigin
   #trigger="cdkOverlayOrigin"
   (click)="openHelpPopup()"
-  [ngStyle]="{ visibility: isQueryMode ? 'visible' : 'hidden' }"
+  [ngStyle]="{ visibility: isQueryMode && showInput ? 'visible' : 'hidden' }"
 >
   <a class="help-container" type="button">
     <img
@@ -116,6 +140,7 @@
     <app-option-autocomplete
       *ngFor="let option of options"
       [value]="option.label"
+      [ngStyle]="getAutocompleteOptionStyle(option.label)"
     >
       {{ option.label }}
     </app-option-autocomplete>
